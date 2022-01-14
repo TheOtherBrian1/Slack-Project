@@ -32,6 +32,7 @@ Sociologist Michael Kimmel points out that touch between male is actually embrac
 A 2002 study in the Journal of Adolescence by Dr. Field found that among the 49 cultures analyzed, those with minimal physical contact with their children had the highest rates of adult violence. Cultures that encouraged touch had virtually no rate of adult violence
 
 A 2000 study by UCLA found that men are more likely than women to respond to stressful experience with adverse coping mechanisms and stress related disorders, such as alcohol and drug abuse
+
 The vast majority of people seeking professional cuddlers are male, straight, educated, divorced and in their early 50s.
 
 A study of 500 particpants in 2014 by Dr. Floyd found that people with affection deprivation or skin hunger were:
