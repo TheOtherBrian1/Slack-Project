@@ -2,7 +2,7 @@
 
 * The article loosely uses the author’s experience comforting his father in hospice
 
-<q>Before I left, I did something else none of the males in my family had ever done before. I leaned close to my father’s ear and whispered, “I love you.”</q>
+> Before I left, I did something else none of the males in my family had ever done before. I leaned close to my father’s ear and whispered, “I love you.”
 
 
 * Tiffany Field, director of the Touch Research Institute at the University of Miami School of Medicine says Touch is the first and most profound language we learn during our adolescent development
