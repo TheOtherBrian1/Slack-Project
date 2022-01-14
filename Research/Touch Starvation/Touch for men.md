@@ -1,9 +1,16 @@
 <h1><a href = "https://www.nytimes.com/2017/12/05/well/family/gender-men-touch.html">The Power of Touch, Especially for Men</a> - The New York Times (nytimes.com)</h1>
 
-* The article loosely uses the author’s experience comforting his father in hospice
+The article loosely uses the author’s experience comforting his father in hospice
 
 > Before I left, I did something else none of the males in my family had ever done before. I leaned close to my father’s ear and whispered, “I love you.”
 
+Americans were not always touch-averse. It’s a relatively recent phenomenon that’s getting worse.
+
+Jay Skidmore, former chairman of psychology department of Seattle Pacific University said: “social-cultural trends in America have focused for decades on reducing touch”
+
+male occupants of American taverns often shared beds with each other
+Abraham Lincoln wrote letters to his friends that narrated elements of non-sexual intimacy
+There’s even a picture book outlining the commonous of non-sexual male intimacy in the past.
 
 * Tiffany Field, director of the Touch Research Institute at the University of Miami School of Medicine says Touch is the first and most profound language we learn during our adolescent development
 Fields states that touch relaxes the nervous system.
@@ -15,13 +22,7 @@ Fields states that touch relaxes the nervous system.
 * lower cortisol levels (especially in women)
 * *high levels of cortisol affects working memory and immune system resiliency
 
-Americans were not always touch-averse. It’s a relatively recent phenomenon that’s getting worse.
 
-Jay Skidmore, former chairman of psychology department of Seattle Pacific University said: “social-cultural trends in America have focused for decades on reducing touch”
-
-male occupants of American taverns often shared beds with each other
-Abraham Lincoln wrote letters to his friends that narrated elements of non-sexual intimacy
-There’s even a picture book outlining the commonous of non-sexual male intimacy in the past.
 
 Psychologist Ofer Zur found that male physical contact is limited to violence and sex
 * Dr. Zur says men are often the victim of ‘gender role stress’. Stoicism and an aversion to touch doesn’t make men stronger, healthier, or resilient. It makes them incredibly vulnerable to anxiety and depression.
