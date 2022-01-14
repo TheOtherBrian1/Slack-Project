@@ -10,7 +10,7 @@ Jay Skidmore, former chairman of psychology department of Seattle Pacific Univer
 
 male occupants of American taverns often shared beds with each other
 Abraham Lincoln wrote letters to his friends that narrated elements of non-sexual intimacy
-There’s even a picture book outlining the commonous of non-sexual male intimacy in the past.
+There’s even a <a href = "https://www.artofmanliness.com/people/relationships/bosom-buddies-a-photo-history-of-male-affection/">picture book</a> outlining the commonous of non-sexual male intimacy in the past.
 
 * Tiffany Field, director of the Touch Research Institute at the University of Miami School of Medicine says Touch is the first and most profound language we learn during our adolescent development
 Fields states that touch relaxes the nervous system.
