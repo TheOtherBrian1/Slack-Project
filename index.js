@@ -1,5 +1,14 @@
-require("dotenv").config()
-const modal = require('./modal')
+require("dotenv").config();
+
+//Connect to mongoDB------------------------------------------------------------------------------------
+const mongoose = require('mongoose');
+const uri = `mongodb+srv://Brian:${process.env.DATABASE_PASSWORD}@cluster0.i56gr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+mongoose.connect(uri).
+  then(()=>console.log('connected to mongodb')).
+  catch(error => console(error));
+
+
+//Connect to slack--------------------------------------------------------------------------------------
 const { App, LogLevel } = require('@slack/bolt');
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -8,43 +17,23 @@ const app = new App({
   logLevel: LogLevel.DEBUG
 });
 
+//Import Views---------------------------------------------------------------------------------
+const initationBlock = require("./views/initiationBlock");
+const questionBlock = require('./views/questionBlock');
+
 // Listens to incoming messages that contain "hello"
 app.message('hello', async ({ message, say }) => {
-  // say() sends a message to the channel where the event was triggered
-  await say({
-    blocks: [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": `Hey there <@${message.user}>!`
-        },
-        "accessory": {
-          "type": "button",
-          "text": {
-            "type": "plain_text",
-            "text": "Click Me"
-          },
-          "action_id": "button_click"
-        }
-      }
-    ],
-    text: `Hey there <@${message.user}>!`
-  });
+  await say(initationBlock(message));
 });
 
-app.action('button_click', async ({ body, payload, client, ack, say }) => {
-  // Acknowledge the action
+app.action('button_click', async ({ body, client, ack }) => {
   await ack();
-  //await say(`clicked the button`);
-  client.views.open({trigger_id: body.trigger_id, view: modal});
+  client.views.open({trigger_id: body.trigger_id, view: questionBlock()});
 });
 
 // Listens to incoming messages that contain "goodbye"
 
 (async () => {
-  // Start your app
   await app.start(process.env.PORT || 3000);
-
   console.log('⚡️ Bolt app is running!');
 })();
