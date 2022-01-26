@@ -27,7 +27,7 @@ const buttons = {
 
 
 
-
+//BURNOUT TEST--------------------------------------------------------
 const burnout = (titleText='Title', index = 0, headerText='header', series=burnoutExamQuestions, actionid = 'duck')=>{
 	const title = {
 		type: "plain_text",
@@ -62,6 +62,10 @@ const burnout = (titleText='Title', index = 0, headerText='header', series=burno
 		]	})
 }
 
+
+module.exports = burnout;
+
+//Helper Functions --------------------------------------------------------------
 function divider(){
 	return {
 		type: 'divider'
@@ -93,7 +97,7 @@ function options(defaultText = 'Sometimes', defaultVal="3"){
 
 function questions(series, index){
 	const questionElements = [];
-	const questionsBlock = series[index].questions.forEach((question)=>{		
+	const questionsBlock = series[index].questions.forEach((question, index)=>{		
 		questionElements.push(
 			{
 				"type": "section",
@@ -103,6 +107,7 @@ function questions(series, index){
 				},
 				"accessory": {
 					"type": "static_select",
+					'action_id': 'milk' + index,
 					"placeholder": {
 						"type": "plain_text",
 						"emoji": true,
@@ -116,4 +121,3 @@ function questions(series, index){
 	});
 	return questionElements;
 }
-module.exports = burnout;

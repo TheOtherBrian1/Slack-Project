@@ -44,6 +44,18 @@ app.action('burnout', async ({ body, client, ack }) => {
   client.views.push({trigger_id: body.trigger_id, view: burnout()});
 });
 
+
+
+
+
+app.action('milk0', async ({ body, ack }) => {
+  await ack();
+  console.log(Object.keys(body), body.user);
+});
+
+
+
+
 (async () => {
   await app.start(process.env.PORT || 3000);
   console.log('⚡️ Bolt app is running!');
