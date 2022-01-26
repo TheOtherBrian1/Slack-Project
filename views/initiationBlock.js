@@ -12,7 +12,7 @@ const initationBlock = (message)=>({
             "type": "plain_text",
             "text": "Click Me"
           },
-          "action_id": "button_click"
+          "action_id": "initiate test"
         }
       }
     ],
