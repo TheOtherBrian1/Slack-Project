@@ -10,7 +10,8 @@ const buttons = {
 				"text": "prev"
 			},
 			"style": "danger",
-			"value": "prev"
+			"value": "prev",
+			'action_id': 'prev'
 		},
 		{
 			"type": "button",
@@ -20,7 +21,8 @@ const buttons = {
 				"text": "next"
 			},
 			"style": "primary",
-			"value": "next"
+			"value": "next",
+			'action_id': 'next'
 		}
 	]
 }
@@ -28,10 +30,11 @@ const buttons = {
 
 
 //BURNOUT TEST--------------------------------------------------------
-const burnout = (titleText='Title', index = 0, headerText='header', series=burnoutExamQuestions, actionid = 'duck')=>{
+const burnout = (index = 0, prevResponses=[],series=burnoutExamQuestions)=>{
+	console.log(index, series[index])
 	const title = {
 		type: "plain_text",
-		text: titleText
+		text: "Burnout Exam"
 	};
 	const close = {
 			"type": "plain_text",
@@ -42,10 +45,11 @@ const burnout = (titleText='Title', index = 0, headerText='header', series=burno
 		text: "Submit"
 	};
 	const header = {
-		"type": "section",
+		"type": "header",
 		"text": {
-			"type": "mrkdwn",
-			"text": `*${headerText}*`
+			"type": "plain_text",
+			"text": 'Section: ' + series[index].section,
+			"emoji": true
 		}
 	}
 
@@ -57,7 +61,7 @@ const burnout = (titleText='Title', index = 0, headerText='header', series=burno
 		blocks:[
 			header,
 			{...divider()},
-			...questions(series, index),
+			...questions(series, index, prevResponses),
 			buttons
 		]	})
 }
@@ -71,31 +75,31 @@ function divider(){
 		type: 'divider'
 	}
 }
-function options(defaultText = 'Sometimes', defaultVal="3"){
-	const opt = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always']
+function options(prevResponse){
+	const opt = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
 	return({
 			"options": [
-			...opt.map((text, index)=>({
+				...opt.map((text, index)=>({
+						"text": {
+							"type": "plain_text",
+							"emoji": true,
+							text
+						},
+						"value": `${index+1}`
+					}))
+			],
+			"initial_option": {
 				"text": {
 					"type": "plain_text",
-					"emoji": true,
-					text
+					"text": opt[prevResponse] ?? 'Sometimes',
+					"emoji": true
 				},
-				"value": `${index+1}`
-			}))
-		],
-		"initial_option": {
-			"text": {
-				"type": "plain_text",
-				"text": defaultText,
-				"emoji": true
-			},
-			"value": `${defaultVal}`
-		}
+				"value": `${prevResponse ?? 3}`
+			}
 	})
 }
 
-function questions(series, index){
+function questions(series, index, prevResponses){
 	const questionElements = [];
 	const questionsBlock = series[index].questions.forEach((question, index)=>{		
 		questionElements.push(
@@ -107,13 +111,13 @@ function questions(series, index){
 				},
 				"accessory": {
 					"type": "static_select",
-					'action_id': 'milk' + index,
+					'action_id': 'drop_down',
 					"placeholder": {
 						"type": "plain_text",
 						"emoji": true,
 						"text": "Your Response"
 					},
-					...options(),
+					...options(prevResponses[index]),
 				}
 			}
 		);

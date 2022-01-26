@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Employee = require('./schemas/employee');
+
 //Connect to mongoDB------------------------------------------------------------------------------------
 const mongoose = require('mongoose');
 const uri = `mongodb+srv://Brian:${process.env.DATABASE_PASSWORD}@cluster0.i56gr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -22,9 +22,12 @@ const initationBlock = require("./views/initiationBlock");
 const burnout = require('./views/burnout tests');
 const pickExamBlock = require("./views/pick_exam_block");
 
+//Import Schemas------------------------------------------------------------------------------
+const Employee = require('./schemas/employee');
+const Tests = require('./schemas/tests');
+
 // Listens to incoming messages that contain "hello"
 app.message('initiate test', async ({ message, say }) => {
-  console.log(message);
   const upsert = {identifier: message.user}
   const employee = await Employee.findOne (upsert);
   let res;
@@ -38,22 +41,52 @@ app.action('initiate test', async ({body, client, ack}) =>{
   client.views.open({trigger_id: body.trigger_id, view: pickExamBlock()});
 });
 
+
+
+
 app.action('burnout', async ({ body, client, ack }) => {
   await ack();
-  // console.log(burnout().blocks[1]);
+  const{username, id, name, team_id} = body.user;
+  const testExists = await Tests.findOne({isSubmitted: false});
+  if(!testExists)
+    await Tests.create({id, username, name, team_id, isSubmitted: false, test: 'Burnout Exam', activeIndex: 0});
   client.views.push({trigger_id: body.trigger_id, view: burnout()});
 });
 
-
-
-
-
-app.action('milk0', async ({ body, ack }) => {
+app.action('drop_down', async ({ body, ack}) => {
   await ack();
-  console.log(Object.keys(body), body.user);
 });
 
+app.action('next', async ({ body,client, ack}) => {
+  await ack();
+  //database values----------
+  const id = body.user.id;
+  const testTitle = body.view.title.text
+  const testSection = body.view.blocks[0].text.text;
+  const testScores = []
 
+  const testAnswers = body.view.state.values;
+  for(const key in testAnswers){
+    testScores.push(testAnswers[key].drop_down.selected_option.value);
+  }
+  //Updating database
+  const test = await Tests.findOne({id, test: testTitle});
+  const {sections, activeIndex} = test;
+  const sectionIndex = sections.findIndex(section=>section.title===testSection)
+  if(sectionIndex !== -1){
+    sections[sectionIndex].scores = testScores;
+    const check = await Tests.findByIdAndUpdate(test._id,{sections})
+  }
+  else{
+    try{
+    const check = await Tests.findByIdAndUpdate(test._id,{sections:[{title: testSection, scores: testScores}]})
+    }
+    catch(err){
+      console.error(err);
+    }
+  }
+  client.views.push({trigger_id: body.trigger_id, view: burnout(activeIndex+1)});
+});
 
 
 (async () => {
