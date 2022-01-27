@@ -31,7 +31,7 @@ const buttons = {
 
 //BURNOUT TEST--------------------------------------------------------
 const burnout = (index = 0, prevResponses=[],series=burnoutExamQuestions)=>{
-	console.log(index, series[index])
+	console.log(index, prevResponses, 'panda milk')
 	const title = {
 		type: "plain_text",
 		text: "Burnout Exam"
@@ -77,6 +77,7 @@ function divider(){
 }
 function options(prevResponse){
 	const opt = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
+	console.log('raisin', prevResponse)
 	return({
 			"options": [
 				...opt.map((text, index)=>({

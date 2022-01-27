@@ -17,6 +17,9 @@ const app = new App({
   logLevel: LogLevel.DEBUG
 });
 
+//Import tests--------------------------------------------------------------------------------
+const burnoutQuestions = require('./Tests/Burnout Assessment Test');
+
 //Import Views---------------------------------------------------------------------------------
 const initationBlock = require("./views/initiationBlock");
 const burnout = require('./views/burnout tests');
@@ -26,7 +29,9 @@ const pickExamBlock = require("./views/pick_exam_block");
 const Employee = require('./schemas/employee');
 const Tests = require('./schemas/tests');
 
-// Listens to incoming messages that contain "hello"
+
+
+// Listens to incoming messages that contain "initiate test"--------------------------------------
 app.message('initiate test', async ({ message, say }) => {
   const upsert = {identifier: message.user}
   const employee = await Employee.findOne (upsert);
@@ -47,18 +52,24 @@ app.action('initiate test', async ({body, client, ack}) =>{
 app.action('burnout', async ({ body, client, ack }) => {
   await ack();
   const{username, id, name, team_id} = body.user;
-  const testExists = await Tests.findOne({isSubmitted: false});
-  if(!testExists)
+  const testExists = await Tests.findOne({id, isSubmitted: false});
+  if(!testExists){
     await Tests.create({id, username, name, team_id, isSubmitted: false, test: 'Burnout Exam', activeIndex: 0});
-  client.views.push({trigger_id: body.trigger_id, view: burnout()});
+    client.views.push({trigger_id: body.trigger_id, view: burnout()});
+  }
+  else
+    client.views.push({trigger_id: body.trigger_id, view: burnout(testExists.activeIndex, testExists.sections[testExists.activeIndex].scores)});
 });
+
 
 app.action('drop_down', async ({ body, ack}) => {
   await ack();
 });
 
+
 app.action('next', async ({ body,client, ack}) => {
   await ack();
+  const maxSections = burnoutQuestions.length - 1;
   //database values----------
   const id = body.user.id;
   const testTitle = body.view.title.text
@@ -69,23 +80,34 @@ app.action('next', async ({ body,client, ack}) => {
   for(const key in testAnswers){
     testScores.push(testAnswers[key].drop_down.selected_option.value);
   }
-  //Updating database
+
+  //Updating database-------------------
   const test = await Tests.findOne({id, test: testTitle});
-  const {sections, activeIndex} = test;
+  let {sections, activeIndex} = test;
+  const {scores, title} = sections;
   const sectionIndex = sections.findIndex(section=>section.title===testSection)
-  if(sectionIndex !== -1){
+  activeIndex = maxSections === activeIndex? maxSections: activeIndex + 1;
+  const newSection = sectionIndex === -1;
+  if(newSection){
     sections[sectionIndex].scores = testScores;
-    const check = await Tests.findByIdAndUpdate(test._id,{sections})
+    const check = await Tests.findByIdAndUpdate(test._id,{sections, activeIndex:0 })
   }
   else{
     try{
-    const check = await Tests.findByIdAndUpdate(test._id,{sections:[{title: testSection, scores: testScores}]})
+      test.sections[activeIndex] = {title: testSection, scores: testScores}
+      const check = await Tests.findByIdAndUpdate(test._id,{sections: test.sections, activeIndex})
     }
     catch(err){
       console.error(err);
     }
   }
-  client.views.push({trigger_id: body.trigger_id, view: burnout(activeIndex+1)});
+
+  //updating view------------------------
+  const result = await client.views.update({
+    view_id: body.view.id,
+    hash: body.view.hash,
+    view: burnout(activeIndex, newSection?0: sections[activeIndex])
+  });
 });
 
 
