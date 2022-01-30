@@ -1,128 +1,52 @@
 const burnoutExamQuestions = require('../Tests/Burnout Assessment Test')
-const buttons = {
-	"type": "actions",
-	"elements": [
-		{
-			"type": "button",
-			"text": {
-				"type": "plain_text",
-				"emoji": true,
-				"text": "prev"
-			},
-			"style": "danger",
-			"value": "prev",
-			'action_id': 'prev'
-		},
-		{
-			"type": "button",
-			"text": {
-				"type": "plain_text",
-				"emoji": true,
-				"text": "next"
-			},
-			"style": "primary",
-			"value": "next",
-			'action_id': 'next'
-		}
-	]
-}
+const { Modal, Section, Input, StaticSelect, Actions, Button, Surfaces, Divider, Header, Bits, Option, BlockCollection }= require('slack-block-builder');
 
 
 
-//BURNOUT TEST--------------------------------------------------------
-const burnout = (index = 0, prevResponses=[],series=burnoutExamQuestions)=>{
-	console.log(index, prevResponses, 'panda milk')
-	const title = {
-		type: "plain_text",
-		text: "Burnout Exam"
-	};
-	const close = {
-			"type": "plain_text",
-			"text": "Cancel",
-	};
-	const submit = {
-		type: "plain_text",
-		text: "Submit"
-	};
-	const header = {
-		"type": "header",
-		"text": {
-			"type": "plain_text",
-			"text": 'Section: ' + series[index].section,
-			"emoji": true
-		}
-	}
+module.exports = (index = 0, prevOptions=null, series=burnoutExamQuestions)=>{
+	const len = series[index].questions.length;
+	const defaultSelects = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
 
-	return ({
-		type: 'modal',
-		title,
-		submit,
-		close,
-		blocks:[
-			header,
-			{...divider()},
-			...questions(series, index, prevResponses),
-			buttons
-		]	})
-}
+	//If the user has started the test, but hasn't finished, his responses are saved as prevQuestions------
+		if(!prevOptions)
+			prevOptions = new Array(len).fill(3);
+	//Creating Question Blocks-----------------------------------------------------------------------------
+		const questions = []
+		console.log(Option({text: defaultSelects[prevOptions[index]], value: prevOptions[index] + ''}));
+			series[index].questions.forEach((question, index)=>{
+				questions.push(Divider());
+				const input = Input({label: question}).element(
+					StaticSelect()
+						.actionId('burnout_drop_down')
+						.options(...defaultSelects.map((text, i)=>Option({text, value: (i+1).toString()})))
+						.initialOption(Option({text: defaultSelects[prevOptions[index]-1], value: prevOptions[index] + ''}))
+				)
+				questions.push(input);
+			})
+	
+	//Creating Button Blocks-----------------------------------------------------------------
+		const responseButtons = ['prev', 'next'].map(val=>Button({
+			text:val, 
+			style: 'next'=== val?'primary':'danger',
+			actionId: val
+		}))
+		
+		if(!index)
+			responseButtons.shift();
+		if(index === len)
+			responseButtons.pop();
 
-
-module.exports = burnout;
-
-//Helper Functions --------------------------------------------------------------
-function divider(){
-	return {
-		type: 'divider'
-	}
-}
-function options(prevResponse){
-	const opt = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
-	console.log('raisin', prevResponse)
-	return({
-			"options": [
-				...opt.map((text, index)=>({
-						"text": {
-							"type": "plain_text",
-							"emoji": true,
-							text
-						},
-						"value": `${index+1}`
-					}))
-			],
-			"initial_option": {
-				"text": {
-					"type": "plain_text",
-					"text": opt[prevResponse] ?? 'Sometimes',
-					"emoji": true
-				},
-				"value": `${prevResponse ?? 3}`
-			}
-	})
-}
-
-function questions(series, index, prevResponses){
-	const questionElements = [];
-	const questionsBlock = series[index].questions.forEach((question, index)=>{		
-		questionElements.push(
-			{
-				"type": "section",
-				"text": {
-					"type": "mrkdwn",
-					"text": question
-				},
-				"accessory": {
-					"type": "static_select",
-					'action_id': 'drop_down',
-					"placeholder": {
-						"type": "plain_text",
-						"emoji": true,
-						"text": "Your Response"
-					},
-					...options(prevResponses[index]),
-				}
-			}
-		);
-		questionElements.push(divider());
-	});
-	return questionElements;
+	//Creating Full Modal---------------------------------------------------------------
+		return(
+			Modal({title: 'Burnout Exam', submit: 'Submit', close: 'Save for Later'})
+			.blocks(
+					Header({text: 'Section: ' + series[index].section}),
+					Divider(),
+					...questions,
+					Actions()
+						.elements(
+							...responseButtons
+						)
+			).buildToJSON()
+		)
 }

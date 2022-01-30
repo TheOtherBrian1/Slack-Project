@@ -10,15 +10,10 @@ const tests = new Schema({
     team_id: String,
     name: String,
     activeIndex: Number,
-    submissionDate: Date
+    submissionDate: Date,
+    allResults: [{date:Date, score: Number}],
+    mostRecentScore: Number
 });
 
 const Tests = mongoose.model('Tests', tests);
 module.exports = Tests;
-// const tests = new Schema({
-//     allResults: [{date:Date, result: Number}],
-//     userId: String,
-//     testName: String,
-//     mostRecentScore: Number,
-//     leastRecentScore: Number
-// });
