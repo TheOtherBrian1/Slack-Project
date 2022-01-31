@@ -11,8 +11,7 @@ const tests = new Schema({
     name: String,
     activeIndex: Number,
     submissionDate: Date,
-    allResults: [{date:Date, score: Number}],
-    mostRecentScore: Number
+    cumulative: Number
 });
 
 const Tests = mongoose.model('Tests', tests);

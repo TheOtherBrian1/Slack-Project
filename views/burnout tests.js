@@ -4,6 +4,7 @@ const { Modal, Section, Input, StaticSelect, Actions, Button, Surfaces, Divider,
 
 
 module.exports = (index = 0, prevOptions=null, series=burnoutExamQuestions)=>{
+	console.log(index, 'index in json');
 	const len = series[index].questions.length;
 	const defaultSelects = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
 
@@ -12,9 +13,9 @@ module.exports = (index = 0, prevOptions=null, series=burnoutExamQuestions)=>{
 			prevOptions = new Array(len).fill(3);
 	//Creating Question Blocks-----------------------------------------------------------------------------
 		const questions = []
-		console.log(Option({text: defaultSelects[prevOptions[index]], value: prevOptions[index] + ''}));
 			series[index].questions.forEach((question, index)=>{
 				questions.push(Divider());
+				console.log(prevOptions, 'online dvd');
 				const input = Input({label: question}).element(
 					StaticSelect()
 						.actionId('burnout_drop_down')
@@ -39,6 +40,7 @@ module.exports = (index = 0, prevOptions=null, series=burnoutExamQuestions)=>{
 	//Creating Full Modal---------------------------------------------------------------
 		return(
 			Modal({title: 'Burnout Exam', submit: 'Submit', close: 'Save for Later'})
+			.callbackId('burnout-submit')
 			.blocks(
 					Header({text: 'Section: ' + series[index].section}),
 					Divider(),

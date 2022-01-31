@@ -15,8 +15,7 @@ require("dotenv").config();
     signingSecret: process.env.SLACK_SIGNING_SECRET,
     logLevel: LogLevel.DEBUG
   });
-
-  
+  console.log(app.event(e=>console.log(e)))
 //Import Controllers--------------------------------------------------
   require('./controller/burnout')(app);
   require('./controller/pickTests')(app);
