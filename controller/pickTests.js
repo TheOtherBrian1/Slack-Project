@@ -20,6 +20,7 @@ module.exports = (app)=>{
     //Open Test Menu-----------------------------------------------------------
     app.action('initiate test', async ({body, client, ack}) =>{
         await ack();
-        client.views.open({trigger_id: body.trigger_id, view: pickExamBlock()});
+        const view = pickExamBlock();
+        client.views.open({trigger_id: body.trigger_id, view});
     });
 }

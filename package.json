@@ -19,8 +19,11 @@
   },
   "homepage": "https://github.com/TheOtherBrian1/Slack-Project#readme",
   "dependencies": {
+    "@google-cloud/storage": "^5.18.1",
     "@slack/bolt": "^3.8.1",
+    "canvas": "^2.9.0",
     "dotenv": "^12.0.4",
+    "jimp": "^0.16.1",
     "join-images": "^1.0.0",
     "mongodb": "^4.3.0",
     "mongoose": "^6.1.7",

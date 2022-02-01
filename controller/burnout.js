@@ -1,5 +1,6 @@
 //Import Views---------------------------------------------------------------------------------
 const burnout = require('../views/burnout tests');
+const results = require('../views/results');
 
 //Import Schemas------------------------------------------------------------------------
 const Tests = require('../schemas/tests');
@@ -7,15 +8,12 @@ const Tests = require('../schemas/tests');
 //Import tests--------------------------------------------------------------------------------
 const burnoutQuestions = require('../Tests/Burnout Assessment Test');
 
-//Import Chart creator-----------------------------------------------------------------
-const QuickChart = require('quickchart-js');
-
 
 
 
 module.exports = (app)=>{
     //NEXT BUTTON--------------------------------------------------------------------------------
-    app.action('next', async ({ body,client, ack}) => {
+    app.action('next', async ({ body,client,ack}) => {
         await ack();
         //database values-------------------------
             const id = body.user.id;
@@ -50,6 +48,7 @@ module.exports = (app)=>{
 
     //PREV BUTTON--------------------------------------------------------------------------------
     app.action('prev', async ({ body,client, ack}) => {
+        console.log(body)
         await ack();
         //database values-------------------------
             const id = body.user.id;
@@ -101,7 +100,6 @@ module.exports = (app)=>{
 
     //Handle Submission-----------------------------------------------
     app.view('burnout-submit', async ({ body, client, ack }) => {
-        await ack();
         //Values to populate document---------------------------
             const testSectionHeader = body.view.blocks[0].text.text;
             const testScores = []
@@ -122,9 +120,6 @@ module.exports = (app)=>{
             for(const val of score.scores)
                 sum+=val
         await Tests.findByIdAndUpdate(_id, {sections, isSubmitted: true, submissionDate: new Date(), cumulative: sum})
-
-        let chart = new QuickChart();
-
         
         sum = [];
         const labels = [];
@@ -132,80 +127,15 @@ module.exports = (app)=>{
             sum.push(section.scores.reduce((a,b)=>a+b)/section.scores.length);
             labels.push(section.title);
         }
-        console.log(sum);
-        chart.setConfig({
-            "type": "radar",
-            "data": {
-              "labels": labels,
-              "datasets": [
-                    {
-                    "backgroundColor": "rgba(255, 99, 132, 0.5)",
-                    "borderColor": "rgb(255, 99, 132)",
-                    "data": sum
-                    }
-                ],
-                "options": {
-                    "maintainAspectRatio": true,
-                    "spanGaps": false,
-                    "elements": {
-                      "line": {
-                        "tension": 0.000001
-                      }
-                    },
-                    "plugins": {
-                      "filler": {
-                        "propagate": false
-                      },
-                      "samples-filler-analyser": {
-                        "target": "chart-analyser"
-                      }
-                    }
-                }
-            }
-        });
-        console.log(chart.getUrl());
 
         //Populating charts ------------------------------------------------------------------------
-        let data = await Tests.find({isSubmitted: true, test: 'Burnout Exam'});
-        const duck = data.map(val=>val.cumulative);
-        console.log(duck,'duck');      
-        const duck_labels = Array.from(Array(duck.length).keys())     
+        let data = await Tests.find({isSubmitted: true, test: 'Burnout Exam'}).limit(10);
+        const scores_over_time = data.map(val=>val.cumulative);
 
-        chart.setWidth(300)
-        chart.setHeight(180);
 
-        chart.setConfig({
-            type: 'line',
-            data: {
-                labels: duck_labels,
-                datasets: [
-                    {
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: duck,
-                        label: 'Dataset',
-                        fill: false,
-                    },
-                ],
-            },
-            options: {
-                scales: {
-                xAxes: [
-                    {
-                    ticks: {
-                        autoSkip: false,
-                        maxRotation: 0,
-                    },
-                    },
-                ],
-                },
-                title: {
-                text: 'fill: false',
-                display: true,
-                },
-            },
-        });
-        console.log(chart.getUrl());
-
+        //Pushing view------------------------------------------------------------------
+        console.log(body, 'milk')
+        const view = await results();
+        ack({response_action:"update", view})
     });
 }
